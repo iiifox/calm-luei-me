@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (() => {
+            const ua = navigator.userAgent;
+            const isMobile = /Mobi|Android|iPhone/i.test(ua) && !/iPad|Tablet/i.test(ua);
+            const isIOS = /iPhone|iPad|iPod/i.test(ua);
+            const scale = isMobile ? (isIOS ? 0.55 : 0.5) : 1.0;
+            const meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = `width=device-width, initial-scale=${scale}, maximum-scale=${scale}${isMobile ? ', user-scalable=no' : ''}`;
+            document.head.appendChild(meta);
+        })();
+    </script>
+    <title>8</title>
+     <!-- PC 端缩放：优先使用 zoom（Chrome/Safari），Firefox 回退 transform -->
+    <style>
+        @media (min-width: 769px) {
+            /* 如果浏览器支持 zoom（Chrome/Safari）则使用它 */
+            @supports (zoom:1) {
+                html { zoom: 0.75; }
+            }
+            /* Firefox 或不支持 zoom 的浏览器使用 transform 回退 */
+            @supports not (zoom:1) {
+                body {
+                    transform: scale(0.75);
+                    transform-origin: top left;
+                    width: 133.33%; /* 1 / 0.75 */
+                    height: 133.33%;
+                }
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/rebate-tabs.css">
+    <link rel="stylesheet" href="css/rebate-system.css">
+    <link rel="stylesheet" href="css/rebate-panel.css">
+    <link rel="stylesheet" href="css/rebate-theme-fox.css">
+    <link rel="stylesheet" href="css/rebate-theme-xd.css">
+    <link rel="stylesheet" href="css/rebate-theme-xy.css">
+    <link rel="stylesheet" href="css/rebate-theme-gbo.css">
+    <link rel="stylesheet" href="css/fab.css">
+    <link rel="stylesheet" href="css/notification-bell.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="notification-bell-container" id="bell">
+            <span class="badge-dot"></span>
+            <div class="notice-box" id="notice"></div>
+        </div>
+        <h1 id="rate-title">费率展示</h1>
+    </header>
+
+    <!-- <div class="rebate-system fox-android-q">
+        <h2 class="rebate-title">
+            长颈鹿安卓Q
+            <a href="http://116.62.161.34:8369/Webindex.aspx" target="_blank">网页入口</a>
+        </h2>
+        <div class="rebate-content">
+            <div class="rebate-group">
+                <span class="channel-label">王者荣耀</span>
+                <span class="charge-type">王者4笔Q钱点券(电商)-直冲</span>
+                <span class="charge-value" style="color: red;">返11.25%</span>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="rebate-tabs">
+        <!-- 动态生成时间标签 -->
+    </div>
+    <!-- 小刀 -->
+    <div class="rebate-system rebate-panel" id="xd-panel">
+        <div class="rebate-slides">
+            <!-- 折扣动态生成 -->
+        </div>
+        <button class="copy-btn" id="copyRatesBtn">复制费率</button>
+        <div class="notification" id="xd-notification">费率已复制到剪贴板</div>
+    </div>
+    <!-- 星悦 -->
+    <div class="rebate-system rebate-panel" id="xy-panel">
+        <div class="rebate-slides">
+            <!-- 折扣动态生成 -->
+        </div>
+        <button class="copy-btn" id="copyJsBtn">复制费率代码</button>
+        <div class="notification" id="xy-notification">费率代码已复制到剪贴板</div>
+    </div>
+
+    <!-- gbo -->
+    <div class="rebate-system">
+        <h2 class="rebate-title">
+            GBO返利折扣
+            <a href="http://hxmm.vdvg82xr.top/main.html" target="_blank">网页入口</a>
+        </h2>
+        <div class="channel-list" id="gboChannelList">
+            <!-- 动态生成内容 -->
+        </div>
+    </div>
+
+    <!-- FAB 悬浮按钮列 -->
+    <div class="fab-container">
+        <a class="fab fab-blue" id="yesterday" target="_blank" rel="noopener noreferrer">昨</a>
+        <a class="fab fab-green" href="/教程" target="_blank">教程</a>
+    </div>
+
+</div>
+<script src="js/script.js"></script>
+<script src="js/notice.js"></script>
+</body>
+</html>

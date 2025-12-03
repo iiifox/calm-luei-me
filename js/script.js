@@ -265,15 +265,18 @@ function renderXyCards(timeBlocks) {
     });
 }
 
-async function initCopyJsButton(profit) {
+async function initCopyJsButton(profitParam, dateParam) {
     const copyBtn = document.getElementById('copyJsBtn');
     if (!copyBtn) return;
 
-    // 拼接带 profit 的接口
+    // 拼接带 profit date 的接口
     let apiUrl = "/api/xyJsCode";
-    if (profit) {
-        apiUrl += `?profit=${encodeURIComponent(profit)}`;
-    }
+    const queryParams = new URLSearchParams();
+    if (profitParam) queryParams.set('profit', profitParam);
+    if (dateParam) queryParams.set('date', dateParam);
+    const queryString = queryParams.toString();
+    if (queryString) apiUrl += `?${queryString}`;
+    // 请求
     const text = await fetch(apiUrl).then(r => r.text());
 
     copyBtn.addEventListener('click', () => {
@@ -282,7 +285,7 @@ async function initCopyJsButton(profit) {
             return;
         }
 
-        // 复制xd.template内容到剪贴板
+        // 复制xy费率脚本代码内容到剪贴板
         navigator.clipboard.writeText(text)
             .then(() => showNotification('费率脚本代码已复制到剪贴板', false, 'xy-notification'))
             .catch(err => {
@@ -407,7 +410,7 @@ async function loadData() {
             }));
         renderXyCards(xyTimeBlocks);
         // 初始化复制星悦费率脚本按钮
-        await initCopyJsButton(profitParam);
+        await initCopyJsButton(profitParam, dateParam);
         
         // === 共用 rebate-tabs（只渲染一次） ===
         (function renderSharedTabsOnce(timeBlocks) {

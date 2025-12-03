@@ -3,23 +3,31 @@ export async function onRequest({request}) {
         // 读取 xyWeb (动态域名)
         const hyper = await fetch(new URL("/config/hyperlink.json", request.url));
         const hyperJson = await hyper.json();
-        const xyWeb = hyperJson.xyWeb; 
-        
-        const url = new URL(request.url);
-        const profit = url.searchParams.get("profit")
-        let discountUrl = '/api/discount';
-        if (profit) {
-            discountUrl += `?profit=${encodeURIComponent(profit)}`;
-        }
+        const xyWeb = hyperJson.xyWeb;
 
-        // 从同域获取折扣数据
-        const res = await fetch(new URL(discountUrl, request.url));
-        const data = await res.json();
-        const date = data.date;
+        const params = new URLSearchParams(window.location.search);
+        const profitParam = params.get('profit');
+        const dateParam = params.get('date');
+        // 构建请求 URL
+        let discountUrl = '/api/discount';
+        const queryParams = new URLSearchParams();
+        if (profitParam) queryParams.set('profit', profitParam);
+        if (dateParam) queryParams.set('date', dateParam);
+        const queryString = queryParams.toString();
+        if (queryString) discountUrl += `?${queryString}`;
+        // 请求
+        const discountResp = await fetch(discountUrl);
+        if (!discountResp.ok) throw new Error('折扣数据接口请求失败');
+        const discountData = await discountResp.json();
+
+        if (discountData.error) throw new Error(discountData.error);
         
+        // 从同域获取折扣数据
+        const date = discountData.date;
+
         // === 只保留变化的字段 ===
-        const timeKeys = Object.keys(data.xy).sort();
-        const xy = data.xy;
+        const timeKeys = Object.keys(discountData.xy).sort();
+        const xy = discountData.xy;
 
         // speed_mode 映射表
         const modeMap = {
@@ -74,7 +82,7 @@ export async function onRequest({request}) {
 
         // 生成 JavaScript 文本
         const jsCode =
-        `fetch("${xyWeb}/api/v1/system/qr-dealers/reckon/configs",{method:"POST",body:JSON.stringify({id:null,date:"${date}",rateConfigs:${JSON.stringify(rateConfigs)}})})
+            `fetch("${xyWeb}/api/v1/system/qr-dealers/reckon/configs",{method:"POST",body:JSON.stringify({id:null,date:"${date}",rateConfigs:${JSON.stringify(rateConfigs)}})})
         .then(r=>r.json())
         .then(d=>console.log(d))
         .catch(e=>console.error("请求失败:",e));`;

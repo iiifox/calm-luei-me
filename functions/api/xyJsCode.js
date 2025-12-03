@@ -9,7 +9,7 @@ export async function onRequest({request}) {
         const profitParam = params.get('profit');
         const dateParam = params.get('date');
         // 构建请求 URL
-        let discountUrl = '/api/discount';
+        let discountUrl = new URL('/api/discount', request.url).toString();
         const queryParams = new URLSearchParams();
         if (profitParam) queryParams.set('profit', profitParam);
         if (dateParam) queryParams.set('date', dateParam);

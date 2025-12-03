@@ -5,7 +5,7 @@ export async function onRequest({request}) {
         const hyperJson = await hyper.json();
         const xyWeb = hyperJson.xyWeb;
 
-        const params = new URLSearchParams(window.location.search);
+        const params = new URL(request.url).searchParams;
         const profitParam = params.get('profit');
         const dateParam = params.get('date');
         // 构建请求 URL

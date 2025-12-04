@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         提取QQ钱包支付响应Body
-// @namespace    https://iiifox.me/
+// @namespace    https://calm.luei.me/
 // @version      1.0.0
 // @description  在腾讯充值中心页面中，监听钱包支付接口，提取正常出码的响应 body 并复制到剪贴板
-// @author       iiifox
+// @author       calmluei
 // @match        *://pay.qq.com/*
 // @grant        none
 // @run-at       document-start

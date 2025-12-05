@@ -30,7 +30,7 @@ function renderXdCards(timeBlocks) {
     const groups = {
         qianbao: {
             label: '钱包',
-            channels: ["渠道A", "渠道B", "渠道C", "渠道D", "渠道E", "渠道F", "渠道Z", "渠道H（低价）"]
+            channels: ["渠道A", "渠道B", "渠道C", "渠道D", "渠道E", "渠道F", "渠道H（低价）", "渠道Z", "Z1000专用"]
         },
         teshu: {
             label: '特殊',

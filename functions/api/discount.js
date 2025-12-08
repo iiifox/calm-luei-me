@@ -103,7 +103,7 @@ function parseXy(lines, profit, xd) {
         if (currentTimeKey && !(currentTimeKey in xy)) {
             xy[currentTimeKey] = {};
             timeOrder.push(currentTimeKey);
-            // 钱包自动同步小刀折扣
+            // 自动同步小刀折扣（如果星悦没报折扣一般都是默认同步小刀）
             for (const [channel, speedType] of Object.entries(xdToXy)) {
                 xy[currentTimeKey][speedType] = xd[currentTimeKey][channel];
                 if (!channelsFirstIndex.has(speedType)) {

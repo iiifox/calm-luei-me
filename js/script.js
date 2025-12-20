@@ -392,7 +392,7 @@ async function loadData() {
             respD = await (await fetch(tomorrowDiscountUrl)).json();
 
             console.log(respD);
-            if (respD.xy) {
+            if (Object.keys(respD.xy).length === 0) {
                 const div = document.createElement('div');
                 div.className = 'fab-top-right';
                 div.id = 'fabTopRight';

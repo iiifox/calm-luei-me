@@ -384,15 +384,12 @@ async function loadData() {
 
         // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
         async function checkAndCreateTomorrowFab(baseDate) {
-            function pad(n){ return String(n).padStart(2, '0'); }
-            const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);
-            
+            const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);            
             let tomorrowDiscountUrl = '/api/discount';
             const qParam = new URLSearchParams();
             qParam.set('date', tomorrowStr);
             tomorrowDiscountUrl += `?${qParam.toString()}`;
-            respD = await (await fetch(discountUrl)).json();
-        
+            respD = await (await fetch(tomorrowDiscountUrl)).json();
             if (respD.xy) {
                 const div = document.createElement('div');
                 div.className = 'fab-top-right';

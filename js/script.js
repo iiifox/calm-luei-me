@@ -390,6 +390,8 @@ async function loadData() {
             qParam.set('date', tomorrowStr);
             tomorrowDiscountUrl += `?${qParam.toString()}`;
             respD = await (await fetch(tomorrowDiscountUrl)).json();
+
+            console.log(respD);
             if (respD.xy) {
                 const div = document.createElement('div');
                 div.className = 'fab-top-right';

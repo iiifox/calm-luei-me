@@ -51,7 +51,7 @@ function renderXdCards(timeBlocks) {
         const slide = document.createElement('div');
         slide.className = 'rebate-slide';
         slide.dataset.time = block.time;
-        
+
         const timeTitle = document.createElement('h2');
         timeTitle.className = 'rebate-title';
         // 创建文本节点
@@ -355,11 +355,10 @@ function showNotification(message, isError = false, containerId = 'xd-notificati
 }
 
 
-
 // 主数据加载逻辑
 async function loadData() {
     await fetchSystemHrefs();
-    
+
     try {
         const params = new URLSearchParams(window.location.search);
         const profitParam = params.get('profit');
@@ -384,17 +383,21 @@ async function loadData() {
         document.getElementById('yesterday').href = `${window.location.origin}/?date=${yesterdayStr}`;
 
         // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
-        (function checkAndCreateTomorrowFab() {
-            function pad(n){ return String(n).padStart(2, '0'); }
+        // 更健壮的“检测明天折扣并创建按钮”实现
+        async function checkAndCreateTomorrowFab(baseDate) {
+            function pad(n) {
+                return String(n).padStart(2, '0');
+            }
+
             // 计算明天
             const tomorrowDate = new Date(baseDate.getTime() + 1 * 24 * 3600_000);
             const ty = tomorrowDate.getFullYear();
             const tm = pad(tomorrowDate.getMonth() + 1);
             const td = pad(tomorrowDate.getDate());
-            const tomorrowIso = tomorrowDate.toISOString().slice(0,10);
+            const tomorrowIso = tomorrowDate.toISOString().slice(0, 10);
             const filePath = `/discount/${ty}/${tm}/${td}.txt`;
             const fileUrl = `${window.location.origin}${filePath}`;
-        
+
             // 容器，若不存在则不强制创建（你也可以选择创建）
             let container = document.getElementById('fabTopRight');
             if (!container) {
@@ -402,30 +405,30 @@ async function loadData() {
                 // container = document.createElement('div'); container.id = 'fabTopRight'; container.className = 'fab-top-right'; document.body.appendChild(container);
                 return; // 不存在容器就不显示
             }
-        
+
             // 确保不存在旧按钮
             const old = document.getElementById('tomorrow');
             if (old) old.remove();
-        
+
             try {
                 // 先尝试 HEAD（较轻量）
-                let resp = await fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' });
-        
+                let resp = await fetch(fileUrl, {method: 'HEAD', cache: 'no-cache'});
+
                 // 如果 HEAD 返回 405/不允许 或 非 ok，就尝试 GET 回退
                 if (!resp.ok) {
-                    resp = await fetch(fileUrl, { method: 'GET', cache: 'no-cache' });
+                    resp = await fetch(fileUrl, {method: 'GET', cache: 'no-cache'});
                 }
-        
+
                 // 如果仍然不是 ok，则认为不存在
                 if (!resp.ok) return;
-        
+
                 // 检查 content-type 或 最终 URL 是否指向 .txt（防止被重写为 index.html）
                 const ct = (resp.headers && resp.headers.get('content-type')) || '';
                 const urlEndsWithTxt = (resp.url || '').toLowerCase().endsWith('.txt');
-        
+
                 // 如果既不是 text/plain 也不是 .txt 结尾，则视为不存在
                 if (!ct.includes('text/plain') && !urlEndsWithTxt) return;
-        
+
                 // 通过检查，确认文件存在 — 创建“明”按钮
                 const a = document.createElement('a');
                 a.className = 'fab fab-red';
@@ -440,7 +443,10 @@ async function loadData() {
                 console.warn('check tomorrow discount failed:', e);
                 return;
             }
-        })();
+        }
+
+        // 在 loadData() 的合适位置调用（baseDate 已定义）
+        checkAndCreateTomorrowFab(baseDate);
         // === end 新增逻辑 ===
 
         // 动态设置费率展示标题
@@ -471,13 +477,13 @@ async function loadData() {
         renderXyCards(xyTimeBlocks);
         // 初始化复制星悦费率脚本按钮
         await initCopyJsButton(profitParam, dateParam);
-        
+
         // === 共用 rebate-tabs（只渲染一次） ===
         (function renderSharedTabsOnce(timeBlocks) {
             // 共用容器
             const tabsContainer = document.querySelector('.rebate-tabs');
             if (!tabsContainer) return;
-        
+
             // 如果只有一个时间块，隐藏并返回
             if (!timeBlocks || timeBlocks.length <= 1) {
                 tabsContainer.style.display = 'none';
@@ -486,15 +492,15 @@ async function loadData() {
 
             // 清空旧内容
             tabsContainer.style.display = '';
-            tabsContainer.innerHTML = ''; 
-        
+            tabsContainer.innerHTML = '';
+
             // 创建 tabs
             timeBlocks.forEach((block, index) => {
                 const tab = document.createElement('div');
                 tab.className = `rebate-tab ${index === timeBlocks.length - 1 ? 'active' : ''}`;
                 tab.textContent = block.time;
                 tab.dataset.time = block.time;
-        
+
                 tab.addEventListener('click', () => {
                     // 用全局 selector 获取两个 panel 的 slides 列表，再滚动到对应 index
                     const xdSlides = document.querySelectorAll('#xd-panel .rebate-slide');
@@ -505,25 +511,26 @@ async function loadData() {
                     if (xdSlide) {
                         // 在 .rebate-slides 容器内平滑滚动（比直接 scrollIntoView 更可靠）
                         const xdContainer = document.querySelector('#xd-panel .rebate-slides');
-                        if (xdContainer) xdContainer.scrollTo({ left: xdSlide.offsetLeft, behavior: 'smooth' });
-                        else xdSlide.scrollIntoView({ behavior: 'smooth' });
+                        if (xdContainer) xdContainer.scrollTo({left: xdSlide.offsetLeft, behavior: 'smooth'});
+                        else xdSlide.scrollIntoView({behavior: 'smooth'});
                     }
                     if (xySlide) {
                         const xyContainer = document.querySelector('#xy-panel .rebate-slides');
-                        if (xyContainer) xyContainer.scrollTo({ left: xySlide.offsetLeft, behavior: 'smooth' });
-                        else xySlide.scrollIntoView({ behavior: 'smooth' });
+                        if (xyContainer) xyContainer.scrollTo({left: xySlide.offsetLeft, behavior: 'smooth'});
+                        else xySlide.scrollIntoView({behavior: 'smooth'});
                     }
                     // 更新 tabs 高亮
                     tabsContainer.querySelectorAll('.rebate-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                 });
-        
+
                 tabsContainer.appendChild(tab);
             });
-        
+
             // 滚动监听：任一 panel 滚动时，仅更新 tabs 的高亮（不必强制同步另一侧滚动，避免抖动）
             const xdContainer = document.querySelector('#xd-panel .rebate-slides');
             const xyContainer = document.querySelector('#xy-panel .rebate-slides');
+
             function updateActiveTabByContainer(container) {
                 if (!container) return;
                 const slides = container.querySelectorAll('.rebate-slide');
@@ -535,14 +542,17 @@ async function loadData() {
                 slides.forEach((s, i) => {
                     const sCenter = s.offsetLeft + s.offsetWidth / 2;
                     const d = Math.abs(sCenter - center);
-                    if (d < bestDist) { bestDist = d; bestIdx = i; }
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestIdx = i;
+                    }
                 });
                 // 高亮 tab
                 const tabs = tabsContainer.querySelectorAll('.rebate-tab');
                 tabs.forEach(t => t.classList.remove('active'));
                 if (tabs[bestIdx]) tabs[bestIdx].classList.add('active');
             }
-        
+
             // 绑定（节流简单实现，避免频繁计算）
             let tOut;
             [xdContainer, xyContainer].forEach(c => {
@@ -552,7 +562,7 @@ async function loadData() {
                     tOut = setTimeout(() => updateActiveTabByContainer(c), 50);
                 });
             });
-        
+
             // 默认滚到最后一个时间块
             setTimeout(() => {
                 const lastTab = tabsContainer.querySelectorAll('.rebate-tab')[timeBlocks.length - 1];

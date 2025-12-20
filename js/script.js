@@ -383,69 +383,58 @@ async function loadData() {
         document.getElementById('yesterday').href = `${window.location.origin}/?date=${yesterdayStr}`;
 
         // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
-        // 更健壮的“检测明天折扣并创建按钮”实现
+        // 更正且一致的检测并创建“明”按钮（容器 id: fabTopRight，按钮 id: fabTomorrow）
         async function checkAndCreateTomorrowFab(baseDate) {
-            function pad(n) {
-                return String(n).padStart(2, '0');
-            }
-
-            // 计算明天
+            function pad(n){ return String(n).padStart(2, '0'); }
             const tomorrowDate = new Date(baseDate.getTime() + 1 * 24 * 3600_000);
             const ty = tomorrowDate.getFullYear();
             const tm = pad(tomorrowDate.getMonth() + 1);
             const td = pad(tomorrowDate.getDate());
-            const tomorrowIso = tomorrowDate.toISOString().slice(0, 10);
+            const tomorrowIso = tomorrowDate.toISOString().slice(0,10);
             const filePath = `/discount/${ty}/${tm}/${td}.txt`;
             const fileUrl = `${window.location.origin}${filePath}`;
-
-            // 容器，若不存在则不强制创建（你也可以选择创建）
-            let container = document.getElementById('fabTopRight');
+        
+            // 使用与你 index.html 中一致的容器 id
+            const container = document.getElementById('fabTopRight');
             if (!container) {
-                // 如果你希望自动创建容器，取消下面这行注释：
-                // container = document.createElement('div'); container.id = 'fabTopRight'; container.className = 'fab-top-right'; document.body.appendChild(container);
-                return; // 不存在容器就不显示
+                // 如果你想让脚本自动创建容器，可以在这里取消注释并调整样式类：
+                // const c = document.createElement('div'); c.id = 'fabTopRight'; c.className = 'fab-top-right'; document.body.appendChild(c);
+                return;
             }
-
-            // 确保不存在旧按钮
-            const old = document.getElementById('tomorrow');
-            if (old) old.remove();
-
+        
+            // 移除旧的按钮（如果存在）
+            const existing = document.getElementById('fabTomorrow');
+            if (existing) existing.remove();
+        
             try {
-                // 先尝试 HEAD（较轻量）
-                let resp = await fetch(fileUrl, {method: 'HEAD', cache: 'no-cache'});
-
-                // 如果 HEAD 返回 405/不允许 或 非 ok，就尝试 GET 回退
+                // 先 HEAD，失败回退到 GET
+                let resp = await fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' });
                 if (!resp.ok) {
-                    resp = await fetch(fileUrl, {method: 'GET', cache: 'no-cache'});
+                    resp = await fetch(fileUrl, { method: 'GET', cache: 'no-cache' });
                 }
-
-                // 如果仍然不是 ok，则认为不存在
                 if (!resp.ok) return;
-
-                // 检查 content-type 或 最终 URL 是否指向 .txt（防止被重写为 index.html）
+        
+                // 检查 Content-Type 或 最终 URL 是否指向 .txt，防止被 index.html 重写误判
                 const ct = (resp.headers && resp.headers.get('content-type')) || '';
                 const urlEndsWithTxt = (resp.url || '').toLowerCase().endsWith('.txt');
-
-                // 如果既不是 text/plain 也不是 .txt 结尾，则视为不存在
                 if (!ct.includes('text/plain') && !urlEndsWithTxt) return;
-
-                // 通过检查，确认文件存在 — 创建“明”按钮
+        
+                // 创建按钮（id = fabTomorrow）
                 const a = document.createElement('a');
                 a.className = 'fab fab-red';
-                a.id = 'tomorrow';
+                a.id = 'fabTomorrow';
                 a.target = '_blank';
                 a.rel = 'noopener noreferrer';
-                a.href = `/?date=${tomorrowIso}`;
+                a.href = `/?date=${tomorrowIso}`; // 如需直接链接到文件，改为 fileUrl
                 a.textContent = '明';
                 container.appendChild(a);
             } catch (e) {
-                // 网络错误等，视为不存在（不显示按钮）
-                console.warn('check tomorrow discount failed:', e);
+                console.warn('检查明日折扣文件时出错：', e);
                 return;
             }
         }
-
-        // 在 loadData() 的合适位置调用（baseDate 已定义）
+        
+        // 在 loadData() 中（baseDate 已存在）调用：
         checkAndCreateTomorrowFab(baseDate);
         // === end 新增逻辑 ===
 

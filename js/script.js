@@ -389,7 +389,7 @@ async function loadData() {
             
             let tomorrowDiscountUrl = '/api/discount';
             const qParam = new URLSearchParams();
-            qParam.set('date', dateParam);
+            qParam.set('date', tomorrowStr);
             tomorrowDiscountUrl += `?${qParam.toString()}`;
             respD = await (await fetch(discountUrl)).json();
         

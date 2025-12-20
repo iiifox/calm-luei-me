@@ -383,54 +383,31 @@ async function loadData() {
         document.getElementById('yesterday').href = `${window.location.origin}/?date=${yesterdayStr}`;
 
         // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
-        // 更正且一致的检测并创建“明”按钮（容器 id: fabTopRight，按钮 id: fabTomorrow）
         async function checkAndCreateTomorrowFab(baseDate) {
             function pad(n){ return String(n).padStart(2, '0'); }
-            const tomorrowDate = new Date(baseDate.getTime() + 1 * 24 * 3600_000);
-            const ty = tomorrowDate.getFullYear();
-            const tm = pad(tomorrowDate.getMonth() + 1);
-            const td = pad(tomorrowDate.getDate());
-            const tomorrowIso = tomorrowDate.toISOString().slice(0,10);
-            const filePath = `/discount/${ty}/${tm}/${td}.txt`;
-            const fileUrl = `${window.location.origin}${filePath}`;
+            const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);
+            
+            const tomorrowDiscountUrl = '/api/discount';
+            const qParam = new URLSearchParams();
+            qParam.set('date', dateParam);
+            tomorrowDiscountUrl += `?${qParam.toString()}`;
+            respD = await (await fetch(discountUrl);).json();
         
-            // 使用与你 index.html 中一致的容器 id
-            const container = document.getElementById('fabTopRight');
-            if (!container) {
-                // 如果你想让脚本自动创建容器，可以在这里取消注释并调整样式类：
-                // const c = document.createElement('div'); c.id = 'fabTopRight'; c.className = 'fab-top-right'; document.body.appendChild(c);
-                return;
-            }
-        
-            // 移除旧的按钮（如果存在）
-            const existing = document.getElementById('fabTomorrow');
-            if (existing) existing.remove();
-        
-            try {
-                // 先 HEAD，失败回退到 GET
-                let resp = await fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' });
-                if (!resp.ok) {
-                    resp = await fetch(fileUrl, { method: 'GET', cache: 'no-cache' });
-                }
-                if (!resp.ok) return;
-        
-                // 检查 Content-Type 或 最终 URL 是否指向 .txt，防止被 index.html 重写误判
-                const ct = (resp.headers && resp.headers.get('content-type')) || '';
-                const urlEndsWithTxt = (resp.url || '').toLowerCase().endsWith('.txt');
-                if (!ct.includes('text/plain') && !urlEndsWithTxt) return;
-        
-                // 创建按钮（id = fabTomorrow）
+            if (respD.xy) {
+                const div = document.createElement('div');
+                div.className = 'fab-top-right';
+                div.id = 'fabTopRight';
+                
                 const a = document.createElement('a');
                 a.className = 'fab fab-red';
                 a.id = 'fabTomorrow';
                 a.target = '_blank';
                 a.rel = 'noopener noreferrer';
-                a.href = `/?date=${tomorrowIso}`; // 如需直接链接到文件，改为 fileUrl
+                a.href = '/?date=2025-12-21';
                 a.textContent = '明';
-                container.appendChild(a);
-            } catch (e) {
-                console.warn('检查明日折扣文件时出错：', e);
-                return;
+                
+                div.appendChild(a);
+                document.body.appendChild(div); // 或指定容器
             }
         }
         

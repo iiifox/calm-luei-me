@@ -411,7 +411,9 @@ async function loadData() {
         }
         
         // 在 loadData() 中（baseDate 已存在）调用：
-        checkAndCreateTomorrowFab(baseDate);
+        if (!dateParam) {
+            checkAndCreateTomorrowFab(baseDate);
+        }
         // === end 新增逻辑 ===
 
         // 动态设置费率展示标题

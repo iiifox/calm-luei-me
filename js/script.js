@@ -386,43 +386,60 @@ async function loadData() {
         // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
         (function checkAndCreateTomorrowFab() {
             function pad(n){ return String(n).padStart(2, '0'); }
+            // 计算明天
             const tomorrowDate = new Date(baseDate.getTime() + 1 * 24 * 3600_000);
             const ty = tomorrowDate.getFullYear();
             const tm = pad(tomorrowDate.getMonth() + 1);
             const td = pad(tomorrowDate.getDate());
             const tomorrowIso = tomorrowDate.toISOString().slice(0,10);
-            // 静态文件路径：/discount/YYYY/MM/DD.txt
-            const fileUrl = `${window.location.origin}/discount/${ty}/${tm}/${td}.txt`;
-
-            // 尝试 HEAD 请求（更轻量），部分静态托管会返回 405/不允许 HEAD，此时再用 GET 回退
-            fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' })
-                .then(resp => {
-                    if (resp.ok) return true;
-                    // 如果 HEAD 返回 405 或其他非 ok，则尝试 GET
-                    return fetch(fileUrl, { method: 'GET', cache: 'no-cache' })
-                        .then(r => r.ok)
-                        .catch(() => false);
-                })
-                .catch(() => {
-                    // HEAD 可能在某些环境抛错，尝试 GET
-                    return fetch(fileUrl, { method: 'GET', cache: 'no-cache' })
-                        .then(r => r.ok)
-                        .catch(() => false);
-                })
-                .then(exists => {
-                    if (!exists) return;
-                    const container = document.getElementById('fabTopRight');
-                    if (!container) return;
-                    // 创建明天按钮
-                    const a = document.createElement('a');
-                    a.className = 'fab fab-red';
-                    a.id = 'tomorrow';
-                    a.target = '_blank';
-                    a.rel = 'noopener noreferrer';
-                    a.href = `/?date=${tomorrowIso}`;
-                    a.textContent = '明';
-                    container.appendChild(a);
-                });
+            const filePath = `/discount/${ty}/${tm}/${td}.txt`;
+            const fileUrl = `${window.location.origin}${filePath}`;
+        
+            // 容器，若不存在则不强制创建（你也可以选择创建）
+            let container = document.getElementById('fabTopRight');
+            if (!container) {
+                // 如果你希望自动创建容器，取消下面这行注释：
+                // container = document.createElement('div'); container.id = 'fabTopRight'; container.className = 'fab-top-right'; document.body.appendChild(container);
+                return; // 不存在容器就不显示
+            }
+        
+            // 确保不存在旧按钮
+            const old = document.getElementById('tomorrow');
+            if (old) old.remove();
+        
+            try {
+                // 先尝试 HEAD（较轻量）
+                let resp = await fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' });
+        
+                // 如果 HEAD 返回 405/不允许 或 非 ok，就尝试 GET 回退
+                if (!resp.ok) {
+                    resp = await fetch(fileUrl, { method: 'GET', cache: 'no-cache' });
+                }
+        
+                // 如果仍然不是 ok，则认为不存在
+                if (!resp.ok) return;
+        
+                // 检查 content-type 或 最终 URL 是否指向 .txt（防止被重写为 index.html）
+                const ct = (resp.headers && resp.headers.get('content-type')) || '';
+                const urlEndsWithTxt = (resp.url || '').toLowerCase().endsWith('.txt');
+        
+                // 如果既不是 text/plain 也不是 .txt 结尾，则视为不存在
+                if (!ct.includes('text/plain') && !urlEndsWithTxt) return;
+        
+                // 通过检查，确认文件存在 — 创建“明”按钮
+                const a = document.createElement('a');
+                a.className = 'fab fab-red';
+                a.id = 'tomorrow';
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.href = `/?date=${tomorrowIso}`;
+                a.textContent = '明';
+                container.appendChild(a);
+            } catch (e) {
+                // 网络错误等，视为不存在（不显示按钮）
+                console.warn('check tomorrow discount failed:', e);
+                return;
+            }
         })();
         // === end 新增逻辑 ===
 

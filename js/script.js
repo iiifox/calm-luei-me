@@ -387,11 +387,11 @@ async function loadData() {
             function pad(n){ return String(n).padStart(2, '0'); }
             const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);
             
-            const tomorrowDiscountUrl = '/api/discount';
+            let tomorrowDiscountUrl = '/api/discount';
             const qParam = new URLSearchParams();
             qParam.set('date', dateParam);
             tomorrowDiscountUrl += `?${qParam.toString()}`;
-            respD = await (await fetch(discountUrl);).json();
+            respD = await (await fetch(discountUrl)).json();
         
             if (respD.xy) {
                 const div = document.createElement('div');

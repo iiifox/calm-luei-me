@@ -383,6 +383,49 @@ async function loadData() {
         const yesterdayStr = new Date(baseDate.getTime() - 1 * 24 * 3600_000).toISOString().slice(0, 10);
         document.getElementById('yesterday').href = `${window.location.origin}/?date=${yesterdayStr}`;
 
+        // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
+        (function checkAndCreateTomorrowFab() {
+            function pad(n){ return String(n).padStart(2, '0'); }
+            const tomorrowDate = new Date(baseDate.getTime() + 1 * 24 * 3600_000);
+            const ty = tomorrowDate.getFullYear();
+            const tm = pad(tomorrowDate.getMonth() + 1);
+            const td = pad(tomorrowDate.getDate());
+            const tomorrowIso = tomorrowDate.toISOString().slice(0,10);
+            // 静态文件路径：/discount/YYYY/MM/DD.txt
+            const fileUrl = `${window.location.origin}/discount/${ty}/${tm}/${td}.txt`;
+
+            // 尝试 HEAD 请求（更轻量），部分静态托管会返回 405/不允许 HEAD，此时再用 GET 回退
+            fetch(fileUrl, { method: 'HEAD', cache: 'no-cache' })
+                .then(resp => {
+                    if (resp.ok) return true;
+                    // 如果 HEAD 返回 405 或其他非 ok，则尝试 GET
+                    return fetch(fileUrl, { method: 'GET', cache: 'no-cache' })
+                        .then(r => r.ok)
+                        .catch(() => false);
+                })
+                .catch(() => {
+                    // HEAD 可能在某些环境抛错，尝试 GET
+                    return fetch(fileUrl, { method: 'GET', cache: 'no-cache' })
+                        .then(r => r.ok)
+                        .catch(() => false);
+                })
+                .then(exists => {
+                    if (!exists) return;
+                    const container = document.getElementById('fabTopRight');
+                    if (!container) return;
+                    // 创建明天按钮
+                    const a = document.createElement('a');
+                    a.className = 'fab fab-red';
+                    a.id = 'tomorrow';
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.href = `/?date=${tomorrowIso}`;
+                    a.textContent = '明';
+                    container.appendChild(a);
+                });
+        })();
+        // === end 新增逻辑 ===
+
         // 动态设置费率展示标题
         if (discountData.date) {
             const rateTitleEl = document.getElementById('rate-title');

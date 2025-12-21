@@ -1,7 +1,6 @@
 /* 容器固定在右下角 */
 .fab-container {
-    /* position: fixed; */
-    position: relative;
+    position: fixed;
     bottom: 32px;
     right: 32px;
     display: flex;

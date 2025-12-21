@@ -56,6 +56,8 @@
         <h1 id="rate-title">费率展示</h1>
     </header>
 
+    <div class="notification" id="goofish-notification">闲鱼内容已加密复制到剪贴板</div>
+
     <div class="rebate-system fox-android-q">
         <h2 class="rebate-title">
             海豚安卓Q
@@ -129,9 +131,21 @@
                 return;
             }
             await navigator.clipboard.writeText(data.result);
+            showNotification("闲鱼内容已加密复制到剪贴板", false);
         } catch (err) {
             alert('请允许剪切板权限');
         }
+    }
+
+    // 显示通知提示
+    function showNotification(message, isError = false, containerId = 'goofish-notification') {
+        const notification = document.getElementById(containerId);
+        if (!notification) return;
+        notification.textContent = message;
+        notification.className = 'notification';
+        if (isError) notification.classList.add('error');
+        notification.classList.add('show');
+        setTimeout(() => notification.classList.remove('show'), 3000);
     }
 </script>
 <script src="js/script.js"></script>

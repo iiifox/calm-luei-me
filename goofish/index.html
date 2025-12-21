@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>处理中</title>
+</head>
+<body>
+
+<script>
+(async () => {
+    try {
+        // 1️⃣ 读剪切板
+        const text = await navigator.clipboard.readText();
+        if (!text) {
+            alert('剪切板为空');
+            return;
+        }
+
+        // 2️⃣ 调接口
+        const res = await fetch('/api/xyContentEncrypt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+            alert('处理失败');
+            return;
+        }
+
+        // 3️⃣ 写回剪切板
+        await navigator.clipboard.writeText(data.result);
+
+        // 4️⃣ 自动关闭（或提示）
+        document.body.innerText = '已处理，可返回';
+
+    } catch (e) {
+        alert('请允许剪切板权限');
+    }
+})();
+</script>
+
+</body>
+</html>

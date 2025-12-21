@@ -47,6 +47,10 @@
     <link rel="stylesheet" href="css/notification-bell.css">
 </head>
 <body>
+    <!-- 顶层通知容器 -->
+    <div id="notification-wrapper">
+        <div id="goofish-notification" class="notification">闲鱼内容已加密复制到剪贴板</div>
+    </div>
 <div class="container">
     <header>
         <div class="notification-bell-container" id="bell">
@@ -106,7 +110,7 @@
     <div class="fab-container">
         <a class="fab fab-blue" id="yesterday" target="_blank" rel="noopener noreferrer">昨</a>
         <button class="fab fab-yellow" onclick="handleEncrypt()">闲鱼</button>
-        <div class="notification" id="goofish-notification">闲鱼内容已加密复制到剪贴板</div>
+        <!-- <div class="notification" id="goofish-notification">闲鱼内容已加密复制到剪贴板</div> -->
         <a class="fab fab-green" href="/教程" target="_blank">教程</a>
     </div>
 
@@ -137,7 +141,7 @@
     }
 
     // 显示通知提示
-    function showNotification(message, isError = false, containerId = 'xy-notification') {
+    function showNotification(message, isError = false, containerId = 'goofish-notification') {
         const notification = document.getElementById(containerId);
         if (!notification) return;
         notification.textContent = message;

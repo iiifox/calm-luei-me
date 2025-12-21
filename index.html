@@ -130,28 +130,10 @@
                 return;
             }
             await navigator.clipboard.writeText(data.result);
-            showNotification("闲鱼内容已加密复制到剪贴板", false);
+            showNotification("闲鱼内容已加密复制到剪贴板", false, containerId = 'goofish-notification');
         } catch (err) {
             alert('请允许剪切板权限');
         }
-    }
-
-    // 显示通知提示
-    function showNotification(message, isError = false, containerId = 'goofish-notification') {
-        const notification = document.getElementById(containerId);
-        if (!notification) return;
-    
-        // 关键：把通知挂到 body 顶层，避免 transform 劫持
-        if (notification.parentElement !== document.body) {
-            document.body.appendChild(notification);
-        }
-    
-        notification.textContent = message;
-        notification.className = 'notification';  // 重置 class
-        if (isError) notification.classList.add('error');
-        notification.classList.add('show');
-    
-        setTimeout(() => notification.classList.remove('show'), 3000);
     }
 </script>
 <script src="js/script.js"></script>

@@ -73,7 +73,7 @@
 }
 
 /* 按钮点击通知样式 */
-/* .rebate-panel .notification {
+.rebate-panel .notification {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -85,9 +85,9 @@
     display: none;
     z-index: 10;
     font-weight: 600;
-} */
+}
 /* 定义动画帧fadeInOut */
-/* @keyframes fadeInOut {
+@keyframes fadeInOut {
     0% {
         opacity: 0;
         transform: translateY(-20px);
@@ -111,4 +111,4 @@
 }
 .rebate-panel .notification.error {
     background: #e74c3c;
-} */
+}

@@ -80,7 +80,7 @@
             <!-- 折扣动态生成 -->
         </div>
         <button class="copy-btn" id="copyRatesBtn">复制费率</button>
-        <div class="notification" id="xd-notification">费率已复制到剪贴板</div>
+        <div class="toast" id="xd-notification"></div>
     </div>
     <!-- 星悦 -->
     <div class="rebate-system rebate-panel" id="xy-panel">
@@ -88,7 +88,7 @@
             <!-- 折扣动态生成 -->
         </div>
         <button class="copy-btn" id="copyJsBtn">复制费率代码</button>
-        <div class="notification" id="xy-notification">费率代码已复制到剪贴板</div>
+        <div class="toast" id="xy-notification"></div>
     </div>
 
     <!-- gbo -->
@@ -106,7 +106,7 @@
     <div class="fab-container">
         <a class="fab fab-blue" id="yesterday" target="_blank" rel="noopener noreferrer">昨</a>
         <button class="fab fab-yellow" onclick="handleEncrypt()">闲鱼</button>
-        <div class="notification" id="goofish-notification">闲鱼内容已加密复制到剪贴板</div>
+        <div class="toast" id="goofish-notification">闲鱼内容已加密复制到剪贴板</div>
         <a class="fab fab-green" href="/教程" target="_blank">教程</a>
     </div>
 
@@ -116,7 +116,7 @@
         try {
             const text = await navigator.clipboard.readText();
             if (!text) {
-                alert('剪切板为空');
+                showNotification("剪切板为空", false, 'goofish-notification');
                 return;
             }
             const res = await fetch('/goofish/contentEncrypt', {
@@ -126,13 +126,13 @@
             });
             const data = await res.json();
             if (!data.success) {
-                alert('处理失败');
+                showNotification("处理失败", false, 'goofish-notification');
                 return;
             }
             await navigator.clipboard.writeText(data.result);
-            showNotification("闲鱼内容已加密复制到剪贴板", false, containerId = 'goofish-notification');
+            showNotification("闲鱼内容已加密复制到剪贴板", false, 'goofish-notification');
         } catch (err) {
-            alert('请允许剪切板权限');
+            showNotification("请允许剪切板权限", false, 'goofish-notification');
         }
     }
 </script>

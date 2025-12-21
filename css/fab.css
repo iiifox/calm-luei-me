@@ -50,6 +50,11 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* 针对focus去掉outline */
+.fab:focus {
+    outline: none;
+}
+
 /* 不同颜色 */
 .fab-blue {
     background: #1976d2;

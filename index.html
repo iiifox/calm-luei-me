@@ -138,16 +138,24 @@
         }
     }
 
-    // 显示通知提示
-    function showNotification(message, isError = false, containerId = 'goofish-notification') {
-        const notification = document.getElementById(containerId);
-        if (!notification) return;
-        notification.textContent = message;
-        notification.className = 'notification';
-        if (isError) notification.classList.add('error');
-        notification.classList.add('show');
-        setTimeout(() => notification.classList.remove('show'), 3000);
+    // // 显示通知提示
+    // function showNotification(message, isError = false, containerId = 'goofish-notification') {
+    //     const notification = document.getElementById(containerId);
+    //     if (!notification) return;
+    //     notification.textContent = message;
+    //     notification.className = 'notification';
+    //     if (isError) notification.classList.add('error');
+    //     notification.classList.add('show');
+    //     setTimeout(() => notification.classList.remove('show'), 3000);
+    // }
+    function showNotification(msg, iserror) {
+        const n = document.getElementById('goofish-notification');
+        n.textContent = msg;
+        n.classList.add('show');
+        window.scrollTo({ top: 0 }); // 保证用户看到
+        setTimeout(() => n.classList.remove('show'), 3000);
     }
+
 </script>
 <script src="js/script.js"></script>
 <script src="js/notice.js"></script>

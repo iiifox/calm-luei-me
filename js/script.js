@@ -142,7 +142,7 @@ function initCopyRateButton(templateData) {
 
         // 复制xd.template内容到剪贴板
         navigator.clipboard.writeText(templateData)
-            .then(() => showNotification('费率已复制到剪贴板', false, 'xd-notification'))
+            .then(() => showNotification('费率已复制到剪贴板', false))
             .catch(err => {
                 showNotification('复制失败，请手动复制', true);
                 console.error('复制失败:', err);
@@ -281,15 +281,14 @@ async function initCopyJsButton(profitParam, dateParam) {
 
     copyBtn.addEventListener('click', () => {
         if (!text) {
-            showNotification('无可用费率数据', true);
+            showNotification('无可用费率数据', true, 'xy-toast');
             return;
         }
-
         // 复制xy费率脚本代码内容到剪贴板
         navigator.clipboard.writeText(text)
-            .then(() => showNotification('费率脚本代码已复制到剪贴板', false, 'xy-notification'))
+            .then(() => showNotification('费率脚本代码已复制到剪贴板', false, 'xy-toast'))
             .catch(err => {
-                showNotification('复制失败，请手动复制', true);
+                showNotification('复制失败，请手动复制', true, 'xy-toast');
                 console.error('复制失败:', err);
             });
     });
@@ -344,11 +343,11 @@ function showError(message) {
 }
 
 // 显示通知提示
-function showNotification(message, isError = false, containerId = 'xd-notification') {
+function showNotification(message, isError = false, containerId = 'xd-toast') {
     const notification = document.getElementById(containerId);
     if (!notification) return;
     notification.textContent = message;
-    notification.className = 'notification';
+    notification.className = 'toast';
     if (isError) notification.classList.add('error');
     notification.classList.add('show');
     setTimeout(() => notification.classList.remove('show'), 3000);

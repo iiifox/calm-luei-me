@@ -15,12 +15,14 @@
         })();
     </script>
     <title>8</title>
-     <!-- PC 端缩放：优先使用 zoom（Chrome/Safari），Firefox 回退 transform -->
+    <!-- PC 端缩放：优先使用 zoom（Chrome/Safari），Firefox 回退 transform -->
     <style>
         @media (min-width: 769px) {
             /* 如果浏览器支持 zoom（Chrome/Safari）则使用它 */
             @supports (zoom:1) {
-                html { zoom: 0.75; }
+                html {
+                    zoom: 0.75;
+                }
             }
             /* Firefox 或不支持 zoom 的浏览器使用 transform 回退 */
             @supports not (zoom:1) {
@@ -99,15 +101,39 @@
             <!-- 动态生成内容 -->
         </div>
     </div>
-    
+
     <!-- FAB 悬浮按钮列 -->
     <div class="fab-container">
         <a class="fab fab-blue" id="yesterday" target="_blank" rel="noopener noreferrer">昨</a>
-        <a class="fab fab-yellow" href="/goofish" target="_blank">闲鱼</a>
+        <button class="fab fab-yellow" onclick="handleEncrypt()">闲鱼</button>
         <a class="fab fab-green" href="/教程" target="_blank">教程</a>
     </div>
 
 </div>
+<script>
+    async function handleEncrypt() {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (!text) {
+                alert('剪切板为空');
+                return;
+            }
+            const res = await fetch('/goofish/contentEncrypt', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({text})
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert('处理失败');
+                return;
+            }
+            await navigator.clipboard.writeText(data.result);
+        } catch (err) {
+            alert('请允许剪切板权限（需 HTTPS）');
+        }
+    }
+</script>
 <script src="js/script.js"></script>
 <script src="js/notice.js"></script>
 </body>

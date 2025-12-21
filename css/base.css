@@ -33,17 +33,19 @@ h1 {
 }
 
 
-/* 按钮点击通知样式 */
 .notification {
-    /* position: absolute; */
-    top: 10px;
-    right: 10px;
-    background: #2ecc71;
+    position: fixed;          /* 固定在页面，不随滚动消失 */
+    bottom: 80px;             /* 离底部 80px，可根据按钮高度调整 */
+    left: 50%;                /* 居中 */
+    transform: translateX(-50%); /* 水平居中 */
+    background: #2ecc71;      /* 成功绿色 */
     color: white;
-    padding: 15px 25px;
+    padding: 12px 24px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    display: none;
-    z-index: 10;
+    display: none;            /* 默认隐藏 */
+    opacity: 0;               /* 用动画显示 */
+    z-index: 9999;            /* 保证在最上层 */
     font-weight: 600;
+    transition: all 0.3s ease;
 }

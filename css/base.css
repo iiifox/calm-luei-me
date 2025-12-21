@@ -10,12 +10,12 @@ body {
     color: #333;
     line-height: 1.6;
     padding: 20px;
+    position: relative;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    position: relative;
 }
 
 header {

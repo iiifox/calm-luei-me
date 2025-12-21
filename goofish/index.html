@@ -17,7 +17,7 @@
         }
 
         // 2️⃣ 调接口
-        const res = await fetch('/api/xyContentEncrypt', {
+        const res = await fetch('/functions/goofish/contentEncrypt.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text })

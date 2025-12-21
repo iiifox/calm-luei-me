@@ -354,6 +354,33 @@ function showNotification(message, isError = false, containerId = 'xd-notificati
     setTimeout(() => notification.classList.remove('show'), 3000);
 }
 
+// === 检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
+async function checkAndCreateTomorrowFab(baseDate) {
+    const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);            
+    let tomorrowDiscountUrl = '/api/discount';
+    const qParam = new URLSearchParams();
+    qParam.set('date', tomorrowStr);
+    tomorrowDiscountUrl += `?${qParam.toString()}`;
+    respD = await (await fetch(tomorrowDiscountUrl)).json();
+
+    console.log(respD);
+    if (Object.keys(respD.xy).length > 0) {
+        const div = document.createElement('div');
+        div.className = 'fab-top-right';
+        div.id = 'fabTopRight';
+        
+        const a = document.createElement('a');
+        a.className = 'fab fab-red';
+        a.id = 'fabTomorrow';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.href = '/?date=2025-12-21';
+        a.textContent = '明';
+        
+        div.appendChild(a);
+        document.body.appendChild(div); // 或指定容器
+    }
+}
 
 // 主数据加载逻辑
 async function loadData() {
@@ -382,34 +409,6 @@ async function loadData() {
         const yesterdayStr = new Date(baseDate.getTime() - 1 * 24 * 3600_000).toISOString().slice(0, 10);
         document.getElementById('yesterday').href = `${window.location.origin}/?date=${yesterdayStr}`;
 
-        // === 新增：检测“明天”的折扣文件是否存在，存在则在右上角创建红色“明”FAB ===
-        async function checkAndCreateTomorrowFab(baseDate) {
-            const tomorrowStr = new Date(baseDate.getTime() + 1 * 24 * 3600_000).toISOString().slice(0, 10);            
-            let tomorrowDiscountUrl = '/api/discount';
-            const qParam = new URLSearchParams();
-            qParam.set('date', tomorrowStr);
-            tomorrowDiscountUrl += `?${qParam.toString()}`;
-            respD = await (await fetch(tomorrowDiscountUrl)).json();
-
-            console.log(respD);
-            if (Object.keys(respD.xy).length > 0) {
-                const div = document.createElement('div');
-                div.className = 'fab-top-right';
-                div.id = 'fabTopRight';
-                
-                const a = document.createElement('a');
-                a.className = 'fab fab-red';
-                a.id = 'fabTomorrow';
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                a.href = '/?date=2025-12-21';
-                a.textContent = '明';
-                
-                div.appendChild(a);
-                document.body.appendChild(div); // 或指定容器
-            }
-        }
-        
         // 在 loadData() 中（baseDate 已存在）调用：
         if (!dateParam) {
             checkAndCreateTomorrowFab(baseDate);

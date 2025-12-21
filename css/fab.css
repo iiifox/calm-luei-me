@@ -80,7 +80,7 @@
 
 /* 按钮点击通知样式 */
 .notification {
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 10px;
     background: #2ecc71;

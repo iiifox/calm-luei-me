@@ -1,7 +1,6 @@
 /* 容器固定在右下角 */
 .fab-container {
-    /* position: fixed; */
-    position: relative;
+    position: fixed;
     bottom: 32px;
     right: 32px;
     display: flex;
@@ -76,41 +75,5 @@
     background: #ffe60f;
 }
 .fab-red {
-    background: #e74c3c;
-}
-
-
-
-#goofish-notification {
-    position: absolute;
-    bottom: 60px;       /* 离按钮上方 60px，可调 */
-    left: 50%;
-    transform: translateX(-50%);
-    background: #2ecc71;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    display: none;
-    opacity: 0;
-    z-index: 999;
-    font-weight: 600;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-#goofish-notification.show {
-    display: block;
-    opacity: 1;
-    animation: fadeInOut 3s forwards;
-}
-
-@keyframes fadeInOut {
-    0%   { opacity: 0; transform: translate(-50%, -20px); }
-    10%  { opacity: 1; transform: translate(-50%, 0); }
-    90%  { opacity: 1; transform: translate(-50%, 0); }
-    100% { opacity: 0; transform: translate(-50%, -20px); }
-}
-
-#goofish-notification.error {
     background: #e74c3c;
 }

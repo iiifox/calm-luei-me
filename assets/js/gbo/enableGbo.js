@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         gbo自动启用
-// @namespace    https://iiifox.me
-// @version      0.1
+// @namespace    https://luei.me
+// @version      1.0.0
 // @description  自动检测并每3分钟启用一次被异常停用的账号
-// @author       iiifox
+// @author       luei
 // @match        *://hxmm.vdvg82xr.top/*
 // @grant        GM_xmlhttpRequest
 // @connect      ggbboo.xyz
-// @connect      iiifox.me
-// @updateURL    https://iiifox.me/js/gbo/enableGbo.js
-// @downloadURL  https://iiifox.me/js/gbo/enableGbo.js
+// @connect      luei.me
+// @updateURL    https://luei.me/assets/js/gbo/enableGbo.js
+// @downloadURL  https://luei.me/assets/js/gbo/enableGbo.js
 // ==/UserScript==
 
 (function () {

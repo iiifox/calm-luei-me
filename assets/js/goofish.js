@@ -9,11 +9,11 @@ async function handleEncrypt() {
     try {
         const text = await navigator.clipboard.readText();
         if (!text) {
-            showNotification("剪切板为空", false, 'goofish-toast');
+            showToast("剪切板为空", false, 'goofish-toast');
             return;
         }
         if (text === lastClipboardContent) {
-            showNotification("请勿重复点击", false, 'goofish-toast');
+            showToast("请勿重复点击", false, 'goofish-toast');
             return;
         }
         const res = await fetch('/goofish/contentEncrypt', {
@@ -23,14 +23,14 @@ async function handleEncrypt() {
         });
         const data = await res.json();
         if (!data.success) {
-            showNotification("闲鱼内容加密失败", false, 'goofish-toast');
+            showToast("闲鱼内容加密失败", false, 'goofish-toast');
             return;
         }
         lastClipboardContent = data.result;
         await navigator.clipboard.writeText(data.result);
-        showNotification("闲鱼内容已加密复制到剪贴板", false, 'goofish-toast');
+        showToast("闲鱼内容已加密复制到剪贴板", false, 'goofish-toast');
     } catch (err) {
-        showNotification("请允许剪切板权限", false, 'goofish-toast');
+        showToast("请允许剪切板权限", false, 'goofish-toast');
     } finally {
         isEncrypting = false;
     }

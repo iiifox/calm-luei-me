@@ -136,15 +136,15 @@ function initCopyRateButton(templateData) {
 
     copyBtn.addEventListener('click', () => {
         if (!templateData) {
-            showNotification('无可用费率数据（xd.template不存在）', true);
+            showToast('无可用费率数据（xd.template不存在）', true);
             return;
         }
 
         // 复制xd.template内容到剪贴板
         navigator.clipboard.writeText(templateData)
-            .then(() => showNotification('费率已复制到剪贴板', false))
+            .then(() => showToast('费率已复制到剪贴板', false))
             .catch(err => {
-                showNotification('复制失败，请手动复制', true);
+                showToast('复制失败，请手动复制', true);
                 console.error('复制失败:', err);
             });
     });
@@ -281,14 +281,14 @@ async function initCopyJsButton(profitParam, dateParam) {
 
     copyBtn.addEventListener('click', () => {
         if (!text) {
-            showNotification('无可用费率数据', true, 'xy-toast');
+            showToast('无可用费率数据', true, 'xy-toast');
             return;
         }
         // 复制xy费率脚本代码内容到剪贴板
         navigator.clipboard.writeText(text)
-            .then(() => showNotification('费率脚本代码已复制到剪贴板', false, 'xy-toast'))
+            .then(() => showToast('费率脚本代码已复制到剪贴板', false, 'xy-toast'))
             .catch(err => {
-                showNotification('复制失败，请手动复制', true, 'xy-toast');
+                showToast('复制失败，请手动复制', true, 'xy-toast');
                 console.error('复制失败:', err);
             });
     });
@@ -299,15 +299,12 @@ async function initCopyJsButton(profitParam, dateParam) {
 function renderGbo(gbo) {
     const container = document.getElementById('gboChannelList');
     container.innerHTML = '';
-
     // 校验数据是否存在
     if (!gbo || typeof gbo !== 'object' || Object.keys(gbo).length === 0) {
         container.innerHTML = '<p>暂无报价</p>';
         return;
     }
-
     const channels = Object.keys(gbo);
-
     // 渲染每个渠道项
     channels.forEach(channel => {
         const {price, paths} = gbo[channel];
@@ -343,7 +340,7 @@ function showError(message) {
 }
 
 // 显示通知提示
-function showNotification(message, isError = false, containerId = 'xd-toast') {
+function showToast(message, isError = false, containerId = 'xd-toast') {
     const notification = document.getElementById(containerId);
     if (!notification) return;
     notification.textContent = message;

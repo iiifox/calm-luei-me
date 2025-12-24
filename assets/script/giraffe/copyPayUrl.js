@@ -7,7 +7,7 @@
 // @match        *://38.47.218.60/*
 // @grant        none
 // @run-at       document-start
-// @updateURL    https://luei.me/script/giraffe/copyPayUrl.js
+// @updateURL    https://luei.me/assets/script/giraffe/copyPayUrl.js
 // ==/UserScript==
 
 (function() {

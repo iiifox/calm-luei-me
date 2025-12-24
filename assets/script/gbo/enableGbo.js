@@ -8,8 +8,8 @@
 // @grant        GM_xmlhttpRequest
 // @connect      ggbboo.xyz
 // @connect      luei.me
-// @updateURL    https://luei.me/assets/js/gbo/enableGbo.js
-// @downloadURL  https://luei.me/assets/js/gbo/enableGbo.js
+// @updateURL    https://luei.me/assets/script/gbo/enableGbo.js
+// @downloadURL  https://luei.me/assets/script/gbo/enableGbo.js
 // ==/UserScript==
 
 (function () {

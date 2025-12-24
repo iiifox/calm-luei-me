@@ -10,8 +10,8 @@
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_xmlhttpRequest
-// @updateURL    https://luei.me/assets/script/dolphins/login/pi1.js
-// @downloadURL  https://luei.me/assets/script/dolphins/login/pi1.js
+// @updateURL    https://luei.me/assets/script/dolphins/pi1.js
+// @downloadURL  https://luei.me/assets/script/dolphins/pi1.js
 // ==/UserScript==
 
 (function () {

@@ -8,6 +8,7 @@
 // @grant        none
 // @run-at       document-start
 // @updateURL    https://luei.me/assets/script/unipay/copyBody.js
+// @downloadURL  https://luei.me/assets/script/unipay/copyBody.js
 // ==/UserScript==
 
 (function () {

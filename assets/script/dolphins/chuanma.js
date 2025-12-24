@@ -9,8 +9,8 @@
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
-// @updateURL    https://luei.me/script/dolphins/chuanma.js
-// @downloadURL  https://luei.me/script/dolphins/chuanma.js
+// @updateURL    https://luei.me/assets/script/dolphins/chuanma.js
+// @downloadURL  https://luei.me/assets/script/dolphins/chuanma.js
 // @connect      081w5a8cim.top
 // @connect      8w0m6rjg3l.top
 // ==/UserScript==

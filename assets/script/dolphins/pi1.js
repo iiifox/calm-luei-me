@@ -4,8 +4,8 @@
 // @version      1.0.0
 // @description  狐狸登录页面注入pi1账号密码谷歌验证码
 // @author       luei
-// @match        http://116.62.161.34:8369/weblogin.aspx
-// @match        http://116.62.161.34:8369/WebLogin.aspx
+// @match        http://47.97.179.243:8369/weblogin.aspx
+// @match        http://47.97.179.243:8369/WebLogin.aspx
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
@@ -18,14 +18,14 @@
     'use strict';
 
     // 配置参数
-    const TOTP_API_URL = 'https://luei.me/totp';
+    const TOTP_API_URL = 'https://luei.me/api/totp';
 
     function isAllowedPath() {
         try {
             const currentHost = window.location.host;
             const currentPath = window.location.pathname.toLowerCase();
             return (
-                currentHost === '116.62.161.34:8369' &&
+                (currentHost === '47.97.179.243:8369') &&
                 currentPath === '/weblogin.aspx'
             );
         } catch (e) {
@@ -33,40 +33,6 @@
             return false;
         }
     }
-
-    // 检查并设置密钥（仅首次）
-    function checkAndSetSecret() {
-        let secret = GM_getValue('pi1_totp_secret', null);
-
-        if (!secret) {
-            secret = prompt('请输入你的TOTP密钥（Base32格式）：', '');
-            if (secret && secret.trim() !== '') {
-                GM_setValue('pi1_totp_secret', secret.trim());
-                alert('密钥已保存');
-                return secret.trim();
-            } else {
-                alert('未设置密钥，验证码功能无法使用');
-                return null;
-            }
-        }
-
-        return secret;
-    }
-
-    // 添加重新设置密钥的菜单
-    GM_registerMenuCommand('重新设置TOTP密钥', () => {
-        if (!isAllowedPath()) {
-            alert('请在目标登录页面操作');
-            return;
-        }
-
-        const newSecret = prompt('请输入新的TOTP密钥（Base32格式）：', '');
-        if (newSecret && newSecret.trim() !== '') {
-            GM_setValue('pi1_totp_secret', newSecret.trim());
-            alert('密钥已更新');
-            location.reload();
-        }
-    });
 
     // 创建验证码显示面板
     function createTotpPanel() {
@@ -288,7 +254,7 @@
             return;
         }
 
-        const secret = checkAndSetSecret();
+        const secret = "NJJU43WPM6BJEPFNQ5SB5XI3BTGHIZGW";
         if (!secret) return;
 
         const displayElements = createTotpPanel();

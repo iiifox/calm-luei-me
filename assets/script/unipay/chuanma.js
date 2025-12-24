@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         自动传码
-// @namespace    https://calm.luei.me/
+// @namespace    https://luei.me/
 // @version      1.0.0
 // @description  自动传码到饭票（需填写url与次数）
-// @author       calmluei
+// @author       luei
 // @match        *://pay.qq.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @updateURL    https://calm.luei.me/assets/script/unipay/chuanma.js
-// @downloadURL  https://calm.luei.me/assets/script/unipay/chuanma.js
+// @updateURL    https://luei.me/assets/script/unipay/chuanma.js
+// @downloadURL  https://luei.me/assets/script/unipay/chuanma.js
 // @connect      081w5a8cim.top
 // @connect      8w0m6rjg3l.top
 // ==/UserScript==

@@ -128,7 +128,7 @@
                 return;
             }
 
-            getRequest("https://iiifox.me/config/gbo.json").then(cfg => {
+            getRequest("https://luei.me/config/gbo.json").then(cfg => {
                 if (!cfg.enableUser.includes(username)) {
                     return;
                 }

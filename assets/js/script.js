@@ -370,7 +370,7 @@ async function checkAndCreateTomorrowFab(baseDate) {
         a.id = 'fabTomorrow';
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
-        a.href = '/?date=2025-12-21';
+        a.href = '/?date=${respD.date}';
         a.textContent = '明';
         
         div.appendChild(a);

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         海豚过安全风险验证
 // @namespace    https://luei.me/
-// @version      1.0.0
+// @version      1.1.0
 // @description  自动判断捕获、风险替换。传码（目前只支持小刀系）、qb破风险（避免自付暂时没写）
 // @author       luei
 // @match        *://pay.qq.com/*
@@ -182,8 +182,8 @@
                 }
             } else {
                 // 将海豚风险验证替换为捕获的响应内容
+                const captured = captureStorage.get();
                 if (ret === 1138) {
-                    const captured = captureStorage.get();
                     if (captured) {
                         Object.defineProperties(xhr, {
                             responseText: {value: captured, writable: false, configurable: true},
@@ -195,6 +195,9 @@
                         showToast('🔄 请先捕获验证码请求再来过风险验证', 'error');
                     }
                 } else if (ret === 0) {
+                    if (captured) {
+                        captureStorage.clear();
+                    }
                     if (!xhr._headlerXhr) {
                         xhr._headlerXhr = true
                         handleResponse(responseJSON, xhr._amt);
@@ -222,8 +225,8 @@
                             showToast('✅ 已捕获非海豚包体验证码响应内容 (fetch)');
                         }
                     } else {
+                        const captured = captureStorage.get();
                         if (ret === 1138) {
-                            const captured = captureStorage.get();
                             if (captured) {
                                 showToast('🔄 已将风险验证替换为验证码', 'warning');
                                 captureStorage.clear();
@@ -235,6 +238,9 @@
                             }
                             showToast('🔄 请先捕获验证码请求再来过风险验证', 'error');
                         } else if (ret === 0) {
+                            if (captured) {
+                                captureStorage.clear();
+                            }
                             handleResponse(json, getAmtFromFormData(init?.body || ''));
                         }
                     }

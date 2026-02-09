@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         gbo自动启用
 // @namespace    https://luei.me
-// @version      1.0.0
+// @version      1.1.0
 // @description  自动检测并每3分钟启用一次被异常停用的账号
 // @author       luei
 // @match        *://hxmm.vdvg82xr.top/*
@@ -128,7 +128,7 @@
                 return;
             }
 
-            getRequest("https://luei.me/config/gbo.json").then(cfg => {
+            getRequest("https://calm.luei.me/config/gbo.json").then(cfg => {
                 if (!cfg.enableUser.includes(username)) {
                     return;
                 }

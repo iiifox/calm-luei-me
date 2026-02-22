@@ -2,7 +2,7 @@
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
 // @version      1.0.0
-// @description  目前只写了QB的部分逻辑，其他的待后续补充
+// @description  星悦智能定时任务，
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
 // @run-at       document-end
@@ -35,7 +35,6 @@
     // 计算定时毫秒数（基于存储的值）
     let INTERVAL_TIME = currentInterval * 60 * 1000;
     let running = false;
-
 
     function gmFetch(url, options = {}) {
         return new Promise((resolve, reject) => {
@@ -117,21 +116,48 @@
         GM_setValue(SMART_TASKS_KEY_LAST_RUN, Date.now());
     }
 
+    // ========== 分页获取所有自动任务ID等相关参数 ==========
+    async function getPrefabTaskMap() {
+        let pageNum = 1;
+        const map = new Map();
+        while (true) {
+            const res = await fetchPageData("https://sdk.wy7l9.com/api/v1/system/prefab-tasks", pageNum);
+            if (res.code !== 0 || !res.data?.list) return map;
+            // 写入Map
+            for (const item of res.data?.list) {
+                map.set(Number(item.accountId), {
+                    id: Number(item.accountId),
+                    status: Number(item.status),
+                    channelType: item.channelType,
+                    limitNum: Number(item.limitNum) - Number(item.arriveNum),
+                    maxAmount: Number(item.maxAmount),
+                    minAmount: Number(item.minAmount),
+                    productId: Number(item.productId || 0),
+                    taskType: Number(item.taskType)
+                });
+            }
+            if (pageNum * PAGE_SIZE >= res.data.total) break;
+            pageNum++;
+        }
+        return map;
+    }
 
-    // ========== 分页获取所有ID: 目前写死Q币，后续添加其他游戏 ==========
+
+    // ========== 分页获取所有账号列表ID等相关参数 ==========
     async function smartTasks() {
         if (running) return;
         running = true;
-        const game = "Q币";
+
+        const prefabMap = await getPrefabTaskMap();
         try {
-            const firstPageRes = await fetchPageData(1, game);
+            const firstPageRes = await fetchPageData("https://sdk.wy7l9.com/api/v1/system/accounts", 1);
             if (firstPageRes.code !== 0 || !firstPageRes.data?.list) {
-                throw new Error('第一页数据异常');
+                return
             }
 
             const {total, list} = firstPageRes.data;
             const totalPages = Math.ceil(total / PAGE_SIZE);
-            const restPages = totalPages > 1 ? await fetchAllPages(totalPages, game) : [];
+            const restPages = totalPages > 1 ? await fetchAllPages(totalPages) : [];
 
             let successCount = 0;
             const allItems = [
@@ -139,18 +165,12 @@
                 ...restPages.flatMap(r => r.data.list)
             ];
             await runTaskQueue(allItems, async item => {
-                // 先将该变参数单独定义，后续要加功能批量设置限笔
-                const limitNum = Number(item.limitNum) - Number(item.arriveNum);
-                const ok = await sendPrefabTasks(
-                    item.activity,
-                    Number(item.id),
-                    limitNum,
-                    Number(item.prefabTask.maxAmount),
-                    Number(item.prefabTask.minAmount),
-                    Number(item.prefabTask.productId),
-                    Number(item.prefabTask.taskType),
-                    Number(item.prefabTask.status),
-                );
+                const info = prefabMap.get(Number(item.id));
+                if (!info) return;
+                const ok = await sendPrefabTasks({
+                    activityUrl: item.activityUrl,
+                    ...info
+                });
                 if (ok) successCount++;
             }, 5); // 并发数
 
@@ -164,19 +184,19 @@
         }
     }
 
-    async function fetchPageData(pageNum, game) {
+    async function fetchPageData(getUrl, pageNum) {
         const params = new URLSearchParams({
-            pageNum: pageNum, pageSize: PAGE_SIZE, enableOrderPull: 1, game: game
+            pageNum: pageNum, pageSize: PAGE_SIZE, enableOrderPull: 1
         });
-        const response = await gmFetch(`https://sdk.wy7l9.com/api/v1/system/accounts?${params.toString()}`);
+        const response = await gmFetch(`${getUrl}?${params.toString()}`);
         if (!response.ok) throw new Error(`第${pageNum}页请求失败，状态码：${response.status}`);
         return response.json();
     }
 
-    async function fetchAllPages(totalPages, game) {
+    async function fetchAllPages(totalPages) {
         const tasks = [];
         for (let i = 2; i <= totalPages; i++) {
-            tasks.push(fetchPageData(i, game));
+            tasks.push(fetchPageData("https://sdk.wy7l9.com/api/v1/system/accounts", i));
         }
         return Promise.all(tasks);
     }
@@ -196,8 +216,17 @@
     }
 
     // ========== 发送自动任务请求 ==========
-    async function sendPrefabTasks(activity, id, limitNum, maxAmount, minAmount, productId, taskType,
-                                   status) {
+    async function sendPrefabTasks({
+                                       activityUrl,
+                                       channelType,
+                                       id,
+                                       limitNum,
+                                       maxAmount,
+                                       minAmount,
+                                       productId,
+                                       taskType,
+                                       status
+                                   }) {
         // 状态等于3说明出码失败，需要重开一下拉单
         if (status === 3) {
             const patchRes = await gmFetch(
@@ -217,8 +246,8 @@
         }
         // 创建任务
         const postData = {
-            activity: activity,
-            channelType: "zh",
+            activityUrl: activityUrl,
+            channelType: channelType,
             id: id,
             limitNum: limitNum,
             maxAmount: maxAmount,

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
-// @version      1.1.0
+// @version      1.1.1
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -141,6 +141,7 @@
                     maxAmount: Number(item.maxAmount),
                     minAmount: Number(item.minAmount),
                     productId: item.productId,
+                    productName: item.productName,
                     taskType: item.taskType
                 });
             }
@@ -232,6 +233,7 @@
                                        maxAmount,
                                        minAmount,
                                        productId,
+                                       productName,
                                        taskType,
                                        status
                                    }) {
@@ -262,7 +264,7 @@
             minAmount: minAmount,
             num: "",
             productId: productId,
-            productName: "",
+            productName: productName,
             proxy: "",
             taskType: taskType
         };

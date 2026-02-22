@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         星悦qb智能启用
 // @namespace    http://calm.luei.me/
-// @version      1.0.1
-// @description  自动扫描所有qb出码失败账号 → 自动重新启用 → 自动创建任务 → 定时重复执行
+// @version      1.1.0
+// @description  自动扫描所有已开拉单qb账号 → 自动创建任务 → 自动重新启用 → 定时重复执行
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
 // @run-at       document-end
@@ -121,7 +121,7 @@
     // ========== 核心功能：分页获取所有ID ==========
     async function fetchPageData(pageNum) {
         const params = new URLSearchParams({
-            pageNum: pageNum, pageSize: PAGE_SIZE, enableOrderPull: 1, status: 3, game: "Q币"
+            pageNum: pageNum, pageSize: PAGE_SIZE, enableOrderPull: 1, game: "Q币"
         });
         const fullUrl = `https://sdk.wy7l9.com/api/v1/system/prefab-tasks?${params.toString()}`;
 

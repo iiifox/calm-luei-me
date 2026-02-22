@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦qb智能启用
-// @namespace    http://luei.me/
-// @version      1.0.0
+// @namespace    http://calm.luei.me/
+// @version      1.0.1
 // @description  自动扫描所有qb出码失败账号 → 自动重新启用 → 自动创建任务 → 定时重复执行
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -170,22 +170,23 @@
 
             const restPages = totalPages > 1 ? await fetchAllPages(totalPages) : [];
 
+            let successCount = 0;
             const allItems = [
                 ...list,
                 ...restPages.flatMap(r => r.data.list)
             ];
-
             await runTaskQueue(allItems, async item => {
                 const limitNum = Number(item.limitNum) - Number(item.arriveNum);
-                await sendPrefabTasks(
+                const ok = await sendPrefabTasks(
                     Number(item.accountId),
                     limitNum,
                     Number(item.maxAmount),
                     Number(item.minAmount)
                 );
+                if (ok) successCount++;
             }, 5); // 并发数
 
-            showToast(`✅ 完成，共${total}个`);
+            showToast(`✅ 完成，共${successCount}个`);
             updateQbLastRunTime();
         } catch (err) {
             console.error(err);
@@ -221,7 +222,7 @@
 
             const taskJson = await taskRes.json();
             // ❗关键判断 成功才启用账号
-            if (taskJson.msg !== "ok") return;
+            if (taskJson.msg !== "ok") return false;
             const patchRes = await gmFetch(
                 'https://sdk.wy7l9.com/api/v1/system/accounts',
                 {
@@ -236,10 +237,10 @@
                 }
             );
             if (!patchRes.ok) throw new Error(`PATCH请求失败，状态码：${patchRes.status}`);
-            return taskJson;
+            return true;
         } catch (err) {
             showToast('❌ 执行失败：' + err.message);
-            throw err;
+            return false;
         }
     }
 

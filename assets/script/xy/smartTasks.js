@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
-// @version      1.0.0
+// @version      1.1.0
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -125,15 +125,23 @@
             if (res.code !== 0 || !res.data?.list) return map;
             // 写入Map
             for (const item of res.data?.list) {
+                let limitNum = 0
+                if (Number(item.limitNum) === 0) {
+                    limitNum = 0;
+                } else if (item.game === "Q币") {
+                    limitNum = Number(item.limitNum) - Number(item.arriveNum);
+                } else {
+                    limitNum = Number(item.limitNum);
+                }
                 map.set(Number(item.accountId), {
                     id: Number(item.accountId),
                     status: Number(item.status),
                     channelType: item.channelType,
-                    limitNum: Number(item.limitNum) - Number(item.arriveNum),
+                    limitNum: limitNum,
                     maxAmount: Number(item.maxAmount),
                     minAmount: Number(item.minAmount),
-                    productId: Number(item.productId || 0),
-                    taskType: Number(item.taskType)
+                    productId: item.productId,
+                    taskType: item.taskType
                 });
             }
             if (pageNum * PAGE_SIZE >= res.data.total) break;

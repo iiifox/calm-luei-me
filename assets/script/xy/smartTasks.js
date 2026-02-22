@@ -2,7 +2,7 @@
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
 // @version      1.0.0
-// @description  星悦智能定时任务，
+// @description  定时执行自动任务，遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
 // @run-at       document-end

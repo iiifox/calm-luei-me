@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
-// @version      1.1.1
+// @version      1.1.2
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -36,6 +36,7 @@
     let INTERVAL_TIME = currentInterval * 60 * 1000;
     let running = false;
 
+    // ================== 功能函数 ==================
     function gmFetch(url, options = {}) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
@@ -58,7 +59,6 @@
         });
     }
 
-    // ================== Toast 提示 ==================
     function showToast(msg) {
         const toast = document.createElement('div');
         toast.textContent = msg;
@@ -83,11 +83,6 @@
         }, 2000);
     }
 
-    /**
-     * 格式化时间戳为易读字符串（yyyy-mm-dd hh:mm:ss）
-     * @param {number} timestamp 时间戳（毫秒）
-     * @returns {string} 格式化后的时间字符串
-     */
     function formatTime(timestamp) {
         if (!timestamp) return '从未运行';
         const date = new Date(timestamp);
@@ -100,18 +95,10 @@
         return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
     }
 
-    // ========== 新增功能：获取/更新上次运行时间 ==========
-    /**
-     * 获取上次运行时间（格式化后）
-     * @returns {string} 格式化的上次运行时间
-     */
     function getLastRunTime() {
         return formatTime(GM_getValue(SMART_TASKS_KEY_LAST_RUN, 0));
     }
 
-    /**
-     * 更新上次运行时间为当前时间
-     */
     function updateLastRunTime() {
         GM_setValue(SMART_TASKS_KEY_LAST_RUN, Date.now());
     }
@@ -291,9 +278,6 @@
 
 
     // ========== 定时任务控制（核心：支持自定义时间） ==========
-    /**
-     * 开启定时任务（使用当前设置的分钟数）
-     */
     function startTimer() {
         if (timerId) {
             showToast(`❌ 定时任务已开启（当前：${currentInterval}分钟），无需重复开启！`);
@@ -305,9 +289,6 @@
         showToast(`✅ 定时任务已开启（${currentInterval}分钟/次，任务ID：${timerId}）`);
     }
 
-    /**
-     * 停止定时任务
-     */
     function stopTimer() {
         if (!timerId) {
             showToast('❌ 定时任务未开启，无需停止！');
@@ -318,16 +299,12 @@
         showToast(`✅ 定时任务已停止！\n原定时：${currentInterval}分钟`);
     }
 
-    // ========== 新增功能：查看上次运行时间（菜单触发） ==========
     function showLastRunTime() {
         const lastRunTime = getLastRunTime();
         alert(`📅 脚本上次运行时间：\n${lastRunTime}\n当前定时：${currentInterval}分钟`);
         console.log(`📅 脚本上次运行时间：${lastRunTime}，当前定时：${currentInterval}分钟`);
     }
 
-    /**
-     * 自定义定时分钟数（菜单触发，弹出输入框）
-     */
     function setCustomInterval() {
         // 弹出输入框，默认显示当前分钟数
         const inputMin = prompt(`请输入QB自动任务分钟数（当前：${currentInterval}分钟）：`, currentInterval);
@@ -356,9 +333,6 @@
         }
     }
 
-    /**
-     * 手动执行一次（不影响定）
-     */
     function runOnce() {
         smartTasks();
         showToast('✅ 已手动触发执行！');

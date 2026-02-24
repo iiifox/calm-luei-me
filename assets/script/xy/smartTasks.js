@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
-// @version      1.1.3
+// @version      1.1.4
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -27,6 +27,8 @@
     const TASKS_DEFAULT_INTERVAL = 30;
     // 智能任务上次运行时间存储键
     const SMART_TASKS_KEY_LAST_RUN = 'smartTasksLastRunTime';
+    // 智能定时任务开关状态
+    const TIMER_ENABLED_KEY = 'smartTasksTimerEnabled';
 
     // 全局变量
     let timerId = null;        // 定时任务ID
@@ -258,6 +260,8 @@
             alert(`❌ 定时任务已开启（当前：${currentInterval}分钟），无需重复开启！`);
             return;
         }
+        // ⭐记录开启状态
+        GM_setValue(TIMER_ENABLED_KEY, true);
         // 立即执行一次，然后按自定义时间重复执行
         smartTasks();
         timerId = setInterval(smartTasks, INTERVAL_TIME);
@@ -271,6 +275,8 @@
         }
         clearInterval(timerId);
         timerId = null;
+        // ⭐记录关闭状态
+        GM_setValue(TIMER_ENABLED_KEY, false);
         alert(`✅ 定时任务已停止！\n原定时：${currentInterval}分钟`);
     }
 
@@ -315,10 +321,15 @@
     // ========== 注册油猴菜单（支持自定义时间） ==========
     GM_registerMenuCommand('🔄 开启定时执行', startTimer);
     GM_registerMenuCommand('⏹️ 停止定时执行', stopTimer);
+    GM_registerMenuCommand('📊 查看定时状态', () => {
+        const enabled = GM_getValue(TIMER_ENABLED_KEY, false);
+        alert(enabled ? "🟢 当前：已开启定时" : "🔴 当前：未开启定时");
+    });
     GM_registerMenuCommand('⚙️ 设置定时分钟数', setCustomInterval);
     GM_registerMenuCommand('▶️ 手动执行一次', runOnce);
     GM_registerMenuCommand('📅 查看上次运行时间', showLastRunTime);
 
-    // 默认自动开启定时
-    startTimer();
+    if (GM_getValue(TIMER_ENABLED_KEY, true)) {
+        startTimer();
+    }
 })();

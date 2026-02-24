@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         星悦智能任务
 // @namespace    http://calm.luei.me/
-// @version      1.1.2
+// @version      1.1.3
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
 // @match        *://sdk.wy7l9.com/*
@@ -57,30 +57,6 @@
                 ontimeout: () => reject(new Error("timeout"))
             });
         });
-    }
-
-    function showToast(msg) {
-        const toast = document.createElement('div');
-        toast.textContent = msg;
-        Object.assign(toast.style, {
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            background: 'rgba(0,0,0,0.85)',
-            color: '#fff',
-            padding: '8px 14px',
-            borderRadius: '6px',
-            fontSize: '14px',
-            zIndex: 99999,
-            opacity: '0',
-            transition: 'opacity 0.3s'
-        });
-        document.body.appendChild(toast);
-        requestAnimationFrame(() => toast.style.opacity = '1');
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 2000);
     }
 
     function formatTime(timestamp) {
@@ -170,11 +146,10 @@
                 if (ok) successCount++;
             }, 5); // 并发数
 
-            showToast(`✅ 自动任务完成，共${successCount}个`);
+            console.log(`✅ ${formatTime(Date.now())} 自动任务完成，共${successCount}个`);
             updateLastRunTime();
         } catch (err) {
-            console.error(err);
-            showToast('❌ 自动任务执行失败');
+            console.error(`❌ ${formatTime(Date.now())} ${err}`);
         } finally {
             running = false;
         }
@@ -271,7 +246,7 @@
 
             return taskJson.msg === "ok";
         } catch (err) {
-            showToast('❌ 执行失败：' + err.message);
+            console.error(`❌ ${formatTime(Date.now())} 执行失败：` + err.message);
             return false;
         }
     }
@@ -280,29 +255,28 @@
     // ========== 定时任务控制（核心：支持自定义时间） ==========
     function startTimer() {
         if (timerId) {
-            showToast(`❌ 定时任务已开启（当前：${currentInterval}分钟），无需重复开启！`);
+            alert(`❌ 定时任务已开启（当前：${currentInterval}分钟），无需重复开启！`);
             return;
         }
         // 立即执行一次，然后按自定义时间重复执行
         smartTasks();
         timerId = setInterval(smartTasks, INTERVAL_TIME);
-        showToast(`✅ 定时任务已开启（${currentInterval}分钟/次，任务ID：${timerId}）`);
+        console.log(`✅ ${formatTime(Date.now())} 定时任务已开启（${currentInterval}分钟/次，任务ID：${timerId}）`);
     }
 
     function stopTimer() {
         if (!timerId) {
-            showToast('❌ 定时任务未开启，无需停止！');
+            alert('❌ 定时任务未开启，无需停止！');
             return;
         }
         clearInterval(timerId);
         timerId = null;
-        showToast(`✅ 定时任务已停止！\n原定时：${currentInterval}分钟`);
+        alert(`✅ 定时任务已停止！\n原定时：${currentInterval}分钟`);
     }
 
     function showLastRunTime() {
         const lastRunTime = getLastRunTime();
         alert(`📅 脚本上次运行时间：\n${lastRunTime}\n当前定时：${currentInterval}分钟`);
-        console.log(`📅 脚本上次运行时间：${lastRunTime}，当前定时：${currentInterval}分钟`);
     }
 
     function setCustomInterval() {
@@ -313,7 +287,7 @@
         if (inputMin === null) return; // 取消输入
         const minNum = Number(inputMin);
         if (isNaN(minNum) || minNum <= 0) {
-            showToast('❌ 请输入有效的正整数！');
+            alert('❌ 请输入有效的正整数！');
             return;
         }
 
@@ -327,15 +301,15 @@
         if (timerId) {
             clearInterval(timerId);
             timerId = setInterval(smartTasks, INTERVAL_TIME);
-            showToast(`✅ 定时时间已修改为：${minNum}分钟！\n当前定时任务已重启`);
+            alert(`✅ 定时时间已修改为：${minNum}分钟！\n当前定时任务已重启`);
         } else {
-            showToast(`✅ 定时时间已修改为：${minNum}分钟！\n需手动开启定时任务`);
+            alert(`✅ 定时时间已修改为：${minNum}分钟！\n需手动开启定时任务`);
         }
     }
 
     function runOnce() {
         smartTasks();
-        showToast('✅ 已手动触发执行！');
+        alert('✅ 已手动触发执行！');
     }
 
     // ========== 注册油猴菜单（支持自定义时间） ==========

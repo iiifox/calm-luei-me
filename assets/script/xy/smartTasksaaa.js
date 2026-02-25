@@ -12,8 +12,8 @@
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
 // @connect      sdk.wy7l9.com
-// @updateURL    https://luei.me/assets/script/xy/smartTasks.js
-// @downloadURL  https://luei.me/assets/script/xy/smartTasks.js
+// @updateURL    https://luei.me/assets/script/xy/smartTasksaaa.js
+// @downloadURL  https://luei.me/assets/script/xy/smartTasksaaa.js
 // ==/UserScript==
 
 (function () {

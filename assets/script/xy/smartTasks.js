@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         星悦智能任务
-// @namespace    http://calm.luei.me/
+// @namespace    https://calm.luei.me/
 // @version      1.2.0
 // @description  定时执行自动任务，同时遇到出码失败的账号自动转为充值中
 // @author       iiifox
@@ -72,10 +72,6 @@
         const minute = String(date.getMinutes()).padStart(2, '0');
         const second = String(date.getSeconds()).padStart(2, '0');
         return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-    }
-
-    function getLastRunTime() {
-        return formatTime(GM_getValue(SMART_TASKS_KEY_LAST_RUN, 0));
     }
 
     function updateLastRunTime() {
@@ -308,7 +304,7 @@
         alert('✅ 已手动触发执行！');
     });
     GM_registerMenuCommand('📅 查看上次运行时间', () => {
-        alert(`📅 脚本上次运行时间：\n${getLastRunTime()}\n当前定时：${currentInterval}分钟`);
+        alert(`📅 脚本上次运行时间：\n${formatTime(GM_getValue(SMART_TASKS_KEY_LAST_RUN, 0))}\n当前定时：${currentInterval}分钟`);
     });
 
 
